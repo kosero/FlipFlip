@@ -4,13 +4,22 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-const GRAVITY float32 = 20
+const GRAVITY float32 = 10
 
 type Car struct {
 	position rl.Vector2
 	velocity rl.Vector2
 	width    float32
 	height   float32
+}
+
+type Wheel struct {
+	position  rl.Vector2
+	velocity  rl.Vector2
+	radius    float32
+	padding   float32
+	stiffness float32
+	damping   float32
 }
 
 func car_move(car *Car, dt float32) {
@@ -27,11 +36,18 @@ func car_move(car *Car, dt float32) {
 	}
 }
 
-type Wheel struct {
-	position rl.Vector2
-	velocity rl.Vector2
-	radius   float32
-	padding  float32
+func car_apply_suspension(car *Car, wheel *Wheel, dt float32) {
+	attachment_point := car.position.Y + car.height/2
+	length := wheel.position.Y - attachment_point
+	resting_length := car.height/2 + wheel.padding + wheel.radius
+	stretch := length - resting_length
+
+	spring_force := stretch * wheel.stiffness * dt
+	relative_velocity := car.velocity.Y - wheel.velocity.Y
+	damping_force := relative_velocity * wheel.damping * dt
+
+	car.velocity.Y += spring_force - damping_force
+	wheel.velocity.Y -= spring_force - damping_force
 }
 
 func wheel_move(wheel *Wheel, dt float32) {
@@ -62,8 +78,10 @@ func main() {
 	}
 
 	back_wheel := Wheel{
-		radius:  25,
-		padding: 10,
+		radius:    25,
+		padding:   10,
+		stiffness: 1.8,
+		damping:   1.2,
 	}
 	back_wheel.position = rl.Vector2{
 		X: car.position.X + car.width - back_wheel.radius - back_wheel.padding,
@@ -71,8 +89,10 @@ func main() {
 	}
 
 	front_wheel := Wheel{
-		radius:  25,
-		padding: 10,
+		radius:    25,
+		padding:   10,
+		stiffness: 1.8,
+		damping:   1.2,
 	}
 	front_wheel.position = rl.Vector2{
 		X: car.position.X + front_wheel.radius + front_wheel.padding,
@@ -88,6 +108,9 @@ func main() {
 		car_move(&car, dt)
 		wheel_move(&back_wheel, dt)
 		wheel_move(&front_wheel, dt)
+
+		car_apply_suspension(&car, &back_wheel, dt)
+		car_apply_suspension(&car, &front_wheel, dt)
 
 		rl.DrawRectangle(int32(car.position.X), int32(car.position.Y), int32(car.width), int32(car.height), rl.Black)
 		rl.DrawCircle(int32(back_wheel.position.X), int32(back_wheel.position.Y), back_wheel.radius, rl.Black)
