@@ -1,8 +1,6 @@
 package main
 
-import (
-	rl "github.com/gen2brain/raylib-go/raylib"
-)
+import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Wheel struct {
 	position  rl.Vector2
@@ -12,19 +10,27 @@ type Wheel struct {
 	stiffness float32
 	damping   float32
 	offset    float32
+	on_ground bool
 }
 
-func wheel_move(wheel *Wheel, dt float32) {
-	wheel.velocity.Y += GRAVITY * dt
+func wheel_move(wheel *Wheel, terrain []rl.Vector2, dt float32) {
 	wheel.position.X += wheel.velocity.X
 	wheel.position.Y += wheel.velocity.Y
+	wheel.on_ground = false
 
-	var max_y float32 = float32(rl.GetScreenHeight()) - wheel.radius
+	for i := 1; i < len(terrain); i++ {
+		point1 := terrain[i-1]
+		point2 := terrain[i]
+		var collision rl.Vector2
+		bottom := rl.NewVector2(wheel.position.X, wheel.position.Y+wheel.radius)
+		if is_point_below_line(point1, point2, bottom, &collision) {
+			wheel.velocity.Y = 0
+			wheel.position.Y = collision.Y - wheel.radius + 1
+			wheel.on_ground = true
+		}
+	}
 
-	if wheel.position.Y >= max_y {
-		wheel.velocity.Y = 0
-		wheel.position.Y = max_y
-	} else {
+	if !wheel.on_ground {
 		wheel.velocity.Y += GRAVITY * dt
 	}
 }
