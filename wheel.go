@@ -11,6 +11,7 @@ type Wheel struct {
 	padding   float32
 	stiffness float32
 	damping   float32
+	offset    float32
 }
 
 func wheel_move(wheel *Wheel, dt float32) {
