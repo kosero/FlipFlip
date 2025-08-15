@@ -15,4 +15,4 @@ $ go run .
 
 # TODO
 * [ ] Add a game menu with pause, play, and settings
-* [ ] Implement car textures for a more polished look
+* [X] Implement car textures for a more polished look

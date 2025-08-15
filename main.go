@@ -20,19 +20,26 @@ func main() {
 		width:    250,
 		height:   100,
 		angle:    0,
+		texture:  rl.LoadTexture("assets/car.png"),
 		back_wheel: Wheel{
 			radius:    25,
 			padding:   10,
 			stiffness: 0.8,
 			damping:   0.6,
+			texture:   rl.LoadTexture("assets/wheel.png"),
 		},
 		front_wheel: Wheel{
 			radius:    25,
 			padding:   10,
 			stiffness: 0.8,
 			damping:   0.6,
+			texture:   rl.LoadTexture("assets/wheel.png"),
 		},
 	}
+
+	defer rl.UnloadTexture(car.texture)
+	defer rl.UnloadTexture(car.back_wheel.texture)
+	defer rl.UnloadTexture(car.front_wheel.texture)
 
 	car.back_wheel.position = rl.NewVector2(
 		car.position.X-car.width/2+car.back_wheel.radius+car.back_wheel.padding,

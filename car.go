@@ -13,6 +13,7 @@ type Car struct {
 	angle       float32
 	back_wheel  Wheel
 	front_wheel Wheel
+	texture     rl.Texture2D
 }
 
 func car_control(car *Car, dt float32) {
@@ -76,7 +77,14 @@ func car_move(car *Car, terrain []rl.Vector2, terrain_length int, dt float32) {
 }
 
 func car_draw(car *Car) {
-	rl.DrawRectanglePro(
+	rl.DrawTexturePro(
+		car.texture,
+		rl.Rectangle{
+			X:      0,
+			Y:      0,
+			Width:  float32(car.texture.Width),
+			Height: float32(car.texture.Height),
+		},
 		rl.Rectangle{
 			X:      car.position.X,
 			Y:      car.position.Y,
@@ -85,10 +93,46 @@ func car_draw(car *Car) {
 		},
 		rl.Vector2{X: car.width / 2, Y: car.height / 2},
 		car.angle,
-		TRANSPARENT_BLACK,
+		rl.White,
 	)
-	rl.DrawCircleV(car.back_wheel.position, car.back_wheel.radius, TRANSPARENT_BLACK)
-	rl.DrawCircleV(car.front_wheel.position, car.front_wheel.radius, TRANSPARENT_BLACK)
+
+	rl.DrawTexturePro(
+		car.back_wheel.texture,
+		rl.Rectangle{
+			X:      0,
+			Y:      0,
+			Width:  float32(car.back_wheel.texture.Width),
+			Height: float32(car.back_wheel.texture.Height),
+		},
+		rl.Rectangle{
+			X:      car.back_wheel.position.X + 18,
+			Y:      car.back_wheel.position.Y,
+			Width:  car.back_wheel.radius * 2,
+			Height: car.back_wheel.radius * 2,
+		},
+		rl.Vector2{X: car.back_wheel.radius, Y: car.back_wheel.radius},
+		0,
+		rl.White,
+	)
+
+	rl.DrawTexturePro(
+		car.front_wheel.texture,
+		rl.Rectangle{
+			X:      0,
+			Y:      0,
+			Width:  float32(car.front_wheel.texture.Width),
+			Height: float32(car.front_wheel.texture.Height),
+		},
+		rl.Rectangle{
+			X:      car.front_wheel.position.X - 8,
+			Y:      car.front_wheel.position.Y,
+			Width:  car.front_wheel.radius * 2,
+			Height: car.front_wheel.radius * 2,
+		},
+		rl.Vector2{X: car.front_wheel.radius, Y: car.front_wheel.radius},
+		0,
+		rl.White,
+	)
 }
 
 func car_apply_suspension(car *Car, wheel *Wheel, dt float32) {

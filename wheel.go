@@ -11,6 +11,7 @@ type Wheel struct {
 	damping   float32
 	offset    float32
 	on_ground bool
+	texture   rl.Texture2D
 }
 
 func wheel_move(wheel *Wheel, terrain []rl.Vector2, dt float32) {
