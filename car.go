@@ -111,7 +111,7 @@ func car_draw(car *Car) {
 			Height: car.back_wheel.radius * 2,
 		},
 		rl.Vector2{X: car.back_wheel.radius, Y: car.back_wheel.radius},
-		0,
+		car.back_wheel.rotate.X,
 		rl.White,
 	)
 
@@ -130,7 +130,7 @@ func car_draw(car *Car) {
 			Height: car.front_wheel.radius * 2,
 		},
 		rl.Vector2{X: car.front_wheel.radius, Y: car.front_wheel.radius},
-		0,
+		car.front_wheel.rotate.X,
 		rl.White,
 	)
 }

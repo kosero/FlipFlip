@@ -1,9 +1,13 @@
 package main
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	rl "github.com/gen2brain/raylib-go/raylib"
+	"math"
+)
 
 type Wheel struct {
 	position  rl.Vector2
+	rotate    rl.Vector2
 	velocity  rl.Vector2
 	radius    float32
 	padding   float32
@@ -33,5 +37,16 @@ func wheel_move(wheel *Wheel, terrain []rl.Vector2, dt float32) {
 
 	if !wheel.on_ground {
 		wheel.velocity.Y += GRAVITY * dt
+	}
+
+	circumference := 2 * math.Pi * float64(wheel.radius)
+	distance := float64(wheel.velocity.X * dt * 20)
+	deltaAngle := (distance / circumference) * 360.0
+	wheel.rotate.X += float32(deltaAngle)
+
+	if wheel.rotate.X >= 360 {
+		wheel.rotate.X -= 360
+	} else if wheel.rotate.X < 0 {
+		wheel.rotate.X += 360
 	}
 }
